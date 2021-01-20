@@ -2,10 +2,7 @@ const OSS = require('ali-oss')
 const fs = require('fs')
 
 const client = new OSS({
-  region: 'oss-cn-hangzhou',
-  accessKeyId: 'LTAI4GH7Gtv8vQkPrwNQk99z',
-  accessKeySecret: 'G3g2nxRzgv2Z6F0ivm2sntSlJLpVGv',
-  bucket: 'chainx-dapp-wallet',
+
 })
 
 class ChainxCdnWebpackPlugin {
