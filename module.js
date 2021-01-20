@@ -88,7 +88,7 @@ class AliossWebpackPlugin {
     compiler.hooks.afterEmit.tap('AliossWebpackPlugin', async (compilation) => {
       this.readDirsAndFiles = fs.readdirSync(this.filesPath)
       this.readJsFiles = this.readDirsAndFiles.filter(dir => dir.indexOf('.js') !== -1 && dir.indexOf('.json') === -1)
-      this.sliceReadFiles = this.readJsFiles.map(file => file.slice(0, 4))
+      this.sliceReadFiles = this.readJsFiles.map(file => file.slice(0, -3))
 
       //删除 oss bucket 的文件
       await this.deleteAllPrefix()
@@ -98,7 +98,6 @@ class AliossWebpackPlugin {
       }, 1000)
       //获取所有文件的相关路径 url
       await this.getFilesUrls()
-      // console.log(this.fileUrlsList)
       // 更改 publicPath、filename、chunkFilename 路径
       await this.buildPath(this.fileUrlsList)
 

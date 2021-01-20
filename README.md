@@ -28,6 +28,8 @@ module.exports = {
     ]
 }
 ```
+To protect your privacy, You'd better save these oss information in a separate file and put it in .gitignore!
+
 
 ## Result
 
