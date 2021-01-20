@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ChainxCdnWebpackPlugin = require('./module')
+const AliosscdnWebpackPlugin = require('./module')
 
 const mode = process.env.NODE_ENV || 'development';
 
@@ -9,13 +9,15 @@ module.exports = {
   mode,
   output: {
     path: path.join(__dirname, 'dist/assets'),
-    // publicPath: '/assets',
-    // filename: 'app.js',
   },
   plugins: [
     new HtmlWebpackPlugin({ filename: '../index.html' }), // output file relative to output.path
-    new ChainxCdnWebpackPlugin({
-      filesPath: 'd://practice/chainx-dapp-wallet-v3/packages/apps/build'
+    new AliosscdnWebpackPlugin({
+      filesPath: <filesPath> // packaged path,
+      region: '<Your oss region>',
+      accessKeyId: '<Your oss accessKeyId>',
+      accessKeySecret: '<Your oss accessKeySecret>',
+      bucket: '<Your oss bucket name>'
     })
   ],
 };

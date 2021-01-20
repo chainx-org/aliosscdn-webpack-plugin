@@ -1,22 +1,21 @@
 const OSS = require('ali-oss')
 const fs = require('fs')
 
-const client = new OSS({
-  region: 'oss-cn-hangzhou',
-  accessKeyId: 'LTAI4GH7Gtv8vQkPrwNQk99z',
-  accessKeySecret: 'G3g2nxRzgv2Z6F0ivm2sntSlJLpVGv',
-  bucket: 'chainx-dapp-wallet',
-})
-
-class ChainxCdnWebpackPlugin {
-  constructor({filesPath}) {
+class AliossWebpackPlugin {
+  constructor({filesPath, region, accessKeyId, accessKeySecret, bucket}) {
     this.fileUrlsList = []
     this.filesPath = filesPath
+    this.client = new OSS({
+      region: region,
+      accessKeyId: accessKeyId,
+      accessKeySecret: accessKeySecret,
+      bucket: bucket,
+    })
   }
 
   async handleDel(name, options) {
     try {
-      await client.delete(name)
+      await this.client.delete(name)
     } catch (error) {
       error.failObjectName = name
       return error
@@ -24,7 +23,7 @@ class ChainxCdnWebpackPlugin {
   }
 
   async deletePrefix(prefix) {
-    const list = await client.list({
+    const list = await this.client.list({
       prefix: prefix
     })
     list.objects = list.objects || []
@@ -38,7 +37,7 @@ class ChainxCdnWebpackPlugin {
   }
 
   async uploadFile(name) {
-    await client.put(name, `${this.filesPath}/${name}.js`)
+    await this.client.put(name, `${this.filesPath}/${name}.js`)
   }
 
   uploadFiles() {
@@ -50,7 +49,7 @@ class ChainxCdnWebpackPlugin {
   }
 
   async getFileUrl(name) {
-    return await client.signatureUrl(name)
+    return await this.client.signatureUrl(name)
   }
 
   async getFilesUrls() {
@@ -86,12 +85,10 @@ class ChainxCdnWebpackPlugin {
 
   async apply(compiler) {
 
-    compiler.hooks.afterEmit.tap('ChainxCdnWebpackPlugin', async (compilation) => {
+    compiler.hooks.afterEmit.tap('AliossWebpackPlugin', async (compilation) => {
       this.readDirsAndFiles = fs.readdirSync(this.filesPath)
       this.readJsFiles = this.readDirsAndFiles.filter(dir => dir.indexOf('.js') !== -1 && dir.indexOf('.json') === -1)
       this.sliceReadFiles = this.readJsFiles.map(file => file.slice(0, 4))
-
-      const {output} = compiler.options
 
       //删除 oss bucket 的文件
       await this.deleteAllPrefix()
@@ -105,9 +102,8 @@ class ChainxCdnWebpackPlugin {
       // 更改 publicPath、filename、chunkFilename 路径
       await this.buildPath(this.fileUrlsList)
 
-
     })
   }
 }
 
-module.exports = ChainxCdnWebpackPlugin
+module.exports = AliossWebpackPlugin
