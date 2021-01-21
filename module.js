@@ -98,7 +98,7 @@ class AliossWebpackPlugin {
       }, 1000)
       //获取所有文件的相关路径 url
       await this.getFilesUrls()
-      // 更改 publicPath、filename、chunkFilename 路径
+      // 更改路径
       await this.buildPath(this.fileUrlsList)
 
     })

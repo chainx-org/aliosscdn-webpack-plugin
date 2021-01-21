@@ -24,11 +24,11 @@ module.exports = {
         region: '<Your oss region>',
         accessKeyId: '<Your oss accessKeyId>',
         accessKeySecret: '<Your oss accessKeySecret>',
-        bucket: '<Your oss bucket name>'
+        bucket: '<Your oss bucket name>'222111
     ]
 }
 ```
-To protect your privacy, You'd better save these oss information in a separate file and put it in .gitignore!
+To protect your privacy, You'd better save these oss information in a private file and put it in .gitignore!
 
 
 ## Result
