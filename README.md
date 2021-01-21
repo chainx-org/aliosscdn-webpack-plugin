@@ -10,7 +10,7 @@ First of all, you need to install webpack
 
 Then install aliosscdn-webpack-plugin
 ```
-yarn add --dev aliosscdn-webpack-plugin
+yarn add --dev ali-oss aliosscdn-webpack-plugin
 ```
 
 ## Basic Usage 
