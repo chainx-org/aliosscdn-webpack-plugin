@@ -24,7 +24,7 @@ module.exports = {
         region: '<Your oss region>',
         accessKeyId: '<Your oss accessKeyId>',
         accessKeySecret: '<Your oss accessKeySecret>',
-        bucket: '<Your oss bucket name>'222111
+        bucket: '<Your oss bucket name>'
     ]
 }
 ```

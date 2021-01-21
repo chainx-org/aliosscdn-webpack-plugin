@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const OSS = require('ali-oss')
 const fs = require('fs')
 
