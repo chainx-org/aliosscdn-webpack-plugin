@@ -3,9 +3,11 @@ const OSS = require('ali-oss')
 const fs = require('fs')
 
 class AliossWebpackPlugin {
-  constructor({filesPath, region, accessKeyId, accessKeySecret, bucket}) {
+  constructor({filesPath, region, accessKeyId, accessKeySecret, bucket, directoryInOss, https}) {
     this.fileUrlsList = []
     this.filesPath = filesPath
+    this.directoryInOss = directoryInOss
+    this.https = https
     this.client = new OSS({
       region: region,
       accessKeyId: accessKeyId,
@@ -16,7 +18,7 @@ class AliossWebpackPlugin {
 
   async handleDel(name, options) {
     try {
-      await this.client.delete(name)
+      await this.client.delete(`${this.directoryInOss}/${name}`)
     } catch (error) {
       error.failObjectName = name
       return error
@@ -38,7 +40,7 @@ class AliossWebpackPlugin {
   }
 
   async uploadFile(name) {
-    await this.client.put(name, `${this.filesPath}/${name}.js`)
+    await this.client.put(`${this.directoryInOss}/${name}`, `${this.filesPath}/${name}.js`)
   }
 
   uploadFiles() {
@@ -50,14 +52,25 @@ class AliossWebpackPlugin {
   }
 
   async getFileUrl(name) {
-    return await this.client.signatureUrl(name)
+    const httpUrl = await this.client.signatureUrl(name)
+    const url = httpUrl.slice(4)
+    const indexOfPostfix = url.indexOf('Expires')
+    const head = url.slice(0, indexOfPostfix)
+    const postfix = url.slice(indexOfPostfix)
+    const indexOfSignature = postfix.indexOf('Signature')
+    const signature = postfix.slice(indexOfSignature)
+    if(this.https){
+      return 'https' + head + signature
+    }else{
+      return 'http' + head + signature
+    }
   }
 
   async getFilesUrls() {
     for (let i = 0; i < this.readJsFiles.length; i++) {
       const index = this.readJsFiles[i].indexOf('.js')
       const name = this.readJsFiles[i].slice(0, index)
-      const fileUrl = await this.getFileUrl(name)
+      const fileUrl = await this.getFileUrl(`${this.directoryInOss}/${name}`)
       this.fileUrlsList.push({name, url: fileUrl})
     }
   }
@@ -89,7 +102,8 @@ class AliossWebpackPlugin {
     compiler.hooks.afterEmit.tap('AliossWebpackPlugin', async (compilation) => {
       this.readDirsAndFiles = fs.readdirSync(this.filesPath)
       this.readJsFiles = this.readDirsAndFiles.filter(dir => dir.indexOf('.js') !== -1 && dir.indexOf('.json') === -1)
-      this.sliceReadFiles = this.readJsFiles.map(file => file.slice(0, -3))
+      this.readCssFiles = this.readDirsAndFiles.filter(dir => dir.indexOf('.css') !== -1)
+      this.sliceReadFiles = this.readJsFiles.map(file => file.slice(0, -3)).push(this.readCssFiles.slice(0,-4))
 
       //删除 oss bucket 的文件
       await this.deleteAllPrefix()

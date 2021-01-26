@@ -20,6 +20,8 @@ const AliossWebpackPlugin = require('aliosscdn-webpack-plugin');
 module.exports = {
     //...
     plugin: [
+        https: <boolean>,
+        directoryInOss: <directory name>,
         filesPath: <filesPath> // packaged path,
         region: '<Your oss region>',
         accessKeyId: '<Your oss accessKeyId>',

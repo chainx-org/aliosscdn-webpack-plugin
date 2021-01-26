@@ -13,6 +13,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({ filename: '../index.html' }), // output file relative to output.path
     new AliosscdnWebpackPlugin({
+      https: <boolean>,
+      directoryInOss: <directory name>,
       filesPath: <filesPath> // packaged path,
       region: '<Your oss region>',
       accessKeyId: '<Your oss accessKeyId>',
